@@ -26,8 +26,8 @@ def generate_password():
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():   #this is called when user clicks add button
 
-    email = username_entry.get()
-    website = website_entry.get()
+    email = email_entry.get()
+    website = website_entry.get().lower()   # saved in small case to compare when user clicks search button
     password = password_entry.get()
 
     new_dict = {
@@ -56,8 +56,19 @@ def save():   #this is called when user clicks add button
             password_entry.delete(0, END)
 
 
-
-
+# .........................SEARCH FUNCTION..............................................#
+def search():
+    website = website_entry.get().lower()
+    email_entry.delete(0, END)
+    try:
+        with open("data.json", mode ="r") as data_file:
+            data = json.load(data_file)
+            email = data[website]["email"]
+            password = data[website]["password"]
+            password_entry.insert(0, password)
+            email_entry.insert(0,  email)
+    except:
+        messagebox.showerror(title="Error", message="Data not found")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -74,15 +85,15 @@ canvas.grid(row=0, column=1)
 #website label and entry
 website_label = Label(text="Website:")
 website_label.grid(row=1, column=0, sticky="W")  # label sticks to left side of the grid
-website_entry = Entry(width=42)
-website_entry.grid(row=1, column=1, columnspan=2, sticky="W")
+website_entry = Entry(width=23)
+website_entry.grid(row=1, column=1, sticky="W")
 website_entry.focus()  # cursor preappears on the entry
 
-username_label = Label(text="Email/Username:")
-username_label.grid(row=2, column=0, sticky="E")
-username_entry = Entry(width=42)
-username_entry.grid(row=2, column=1, columnspan=2, sticky="W")
-username_entry.insert(0, "e.g. prayagkharel@gmail.com")  #starting string in entry
+email_label = Label(text="Email/Username:")
+email_label.grid(row=2, column=0, sticky="E")
+email_entry = Entry(width=42)
+email_entry.grid(row=2, column=1, columnspan=2, sticky="W")
+email_entry.insert(0, string="prayagkharel006@gmail.com")
 
 password_label = Label(text="Password:")
 password_label.grid(row=3, column=0, sticky= "W")
@@ -94,6 +105,9 @@ button_add.grid(row=4, column=1, columnspan=2, sticky="W")
 
 generate_password_button = Button(text= "Generate Password", command = generate_password, highlightthickness=0)
 generate_password_button.grid(row=3, column=1, columnspan=2,  sticky="E")
+
+search_button = Button(text= "Search", width= 14, highlightthickness=0, command= search)
+search_button.grid(row=1, column = 1, columnspan=2, sticky = "E")
 
 
 
