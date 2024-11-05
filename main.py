@@ -1,3 +1,4 @@
+import json
 import random
 from tkinter import *
 from tkinter import messagebox               # this is not tkinter's class it is also a module
@@ -29,19 +30,33 @@ def save():   #this is called when user clicks add button
     website = website_entry.get()
     password = password_entry.get()
 
+    new_dict = {
+        website: {
+            "email":email,
+        "password":password,
+        }
+    }
+
     if len(email) == 0 or len(website) == 0 or len(password) == 0:
         messagebox.showerror(title="!!" , message="You left some fields empty.")
     else:
-        confirmation = messagebox.askokcancel(title="!!",
-                                              message=f"These are the details:\n Website:{website}\nEmail: {email}\n "
-                                                      f"Password: {password}\n Are you sure you want to save them?")
-        # this returns boolean i.e true if user clicks ok and false if user clicks cancel
+        try:
+            with open("data.json", mode="r") as data_file:
+                data = json.load(data_file)
+                data.update(new_dict)
+        except:
+            with open("data.json", mode="w") as data_file:
+                json.dump(new_dict, data_file, indent=4)
+        else:
+            with open("data.json", mode="w") as data_file:
+                json.dump(data, data_file, indent= 4)
 
-        if confirmation == True:
-            with open("data.txt", mode="a") as file:
-                file.write(f"{website}  |  {email}  | {password}\n")
-                website_entry.delete(0, END)
-                password_entry.delete(0, END)
+        finally:
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
+
+
+
 
 
 
